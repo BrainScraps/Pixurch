@@ -1,9 +1,14 @@
-package com.codepath.pixurch;
+package com.codepath.pixurch.activities;
 
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import com.codepath.pixurch.R;
+import com.codepath.pixurch.models.SearchRequest;
+
+import java.util.ArrayList;
 
 
 public class SearchActivity extends ActionBarActivity {
@@ -12,6 +17,9 @@ public class SearchActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
+        ArrayList request = new SearchRequest("isaac").response();
+
+
     }
 
 
