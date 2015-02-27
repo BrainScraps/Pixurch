@@ -4,8 +4,10 @@ import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.codepath.pixurch.R;
+import com.codepath.pixurch.models.ImageResult;
 import com.codepath.pixurch.models.SearchRequest;
 
 import java.util.ArrayList;
@@ -13,11 +15,19 @@ import java.util.ArrayList;
 
 public class SearchActivity extends ActionBarActivity {
 
+    ArrayList<ImageResult> imageResults;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
-        ArrayList request = new SearchRequest("isaac").response();
+            new SearchRequest("isaac").response(new SearchRequest.ResultLoaderListener() {
+                @Override
+                public void onResultLoaded(ArrayList<ImageResult> resultsArray) {
+                    imageResults = resultsArray;
+                    Toast.makeText(getApplicationContext(),"HEY!", Toast.LENGTH_LONG).show();
+                }
+            });
 
 
     }

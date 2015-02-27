@@ -20,23 +20,25 @@ public class SearchRequest {
     static AsyncHttpClient client;
     static String queryText;
     static ArrayList<ImageResult> resultArray;
-//    AsyncHttpClient client;
 
     public SearchRequest(String queryText) {
         queryText = queryText;
     }
 
+    public static interface ResultLoaderListener {
+        public void onResultLoaded(ArrayList<ImageResult> resultsArray);
+    }
     private static String searchUrlWithParams() {
         return ENDPOINT + "?v=1.0&rsz=8&q=" + queryText;
     }
 
-    public static ArrayList response() {
+    public static void response(final ResultLoaderListener listener) {
         client = new AsyncHttpClient();
         client.get(searchUrlWithParams(), new JsonHttpResponseHandler() {
 
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                resultArray = null;
+                resultArray = new ArrayList<ImageResult>();
                 try {
                     JSONArray array = response.getJSONObject("responseData").getJSONArray("results");
                     Log.d("WHAT", String.valueOf(array.length()));
@@ -49,9 +51,9 @@ public class SearchRequest {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+                listener.onResultLoaded(resultArray);
             }
         });
 
-        return resultArray;
     }
 }
