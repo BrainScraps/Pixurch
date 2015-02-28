@@ -12,6 +12,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URL;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 
 public class SearchRequest {
@@ -22,14 +25,22 @@ public class SearchRequest {
     static ArrayList<ImageResult> resultArray;
 
     public SearchRequest(String queryText) {
-        queryText = queryText;
+        this.queryText = queryText;
     }
 
     public static interface ResultLoaderListener {
         public void onResultLoaded(ArrayList<ImageResult> resultsArray);
     }
+
+    private static String encodedQueryText() {
+        try {
+            return URLEncoder.encode(queryText, "UTF-8");
+        } catch (UnsupportedEncodingException e){
+            return "";
+        }
+    }
     private static String searchUrlWithParams() {
-        return ENDPOINT + "?v=1.0&rsz=8&q=" + queryText;
+        return ENDPOINT + "?v=1.0&rsz=8&q=" + encodedQueryText();
     }
 
     public static void response(final ResultLoaderListener listener) {
@@ -38,10 +49,9 @@ public class SearchRequest {
 
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                resultArray = new ArrayList<ImageResult>();
+                resultArray = new ArrayList<>();
                 try {
                     JSONArray array = response.getJSONObject("responseData").getJSONArray("results");
-                    Log.d("WHAT", String.valueOf(array.length()));
                     for (int i = 0; i < array.length(); i++) {
                         JSONObject obj = array.getJSONObject(i);
                         ImageResult result = new ImageResult(obj);

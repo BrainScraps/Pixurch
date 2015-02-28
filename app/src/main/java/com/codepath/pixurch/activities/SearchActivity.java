@@ -2,11 +2,14 @@ package com.codepath.pixurch.activities;
 
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.codepath.pixurch.R;
+import com.codepath.pixurch.adapters.ResultAdapter;
 import com.codepath.pixurch.models.ImageResult;
 import com.codepath.pixurch.models.SearchRequest;
 
@@ -16,16 +19,28 @@ import java.util.ArrayList;
 public class SearchActivity extends ActionBarActivity {
 
     ArrayList<ImageResult> imageResults;
+    RecyclerView rvResults;
+    ResultAdapter aResults;
+    RecyclerView.LayoutManager manager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
-            new SearchRequest("isaac").response(new SearchRequest.ResultLoaderListener() {
+        imageResults = new ArrayList<>();
+        rvResults = (RecyclerView) findViewById(R.id.rvResults);
+        manager = new StaggeredGridLayoutManager(3,StaggeredGridLayoutManager.VERTICAL);
+        rvResults.setLayoutManager(manager);
+        aResults = new ResultAdapter(getApplicationContext(), imageResults);
+        rvResults.setAdapter(aResults);
+
+            new SearchRequest("Emma Stone").response(new SearchRequest.ResultLoaderListener() {
                 @Override
                 public void onResultLoaded(ArrayList<ImageResult> resultsArray) {
-                    imageResults = resultsArray;
-                    Toast.makeText(getApplicationContext(),"HEY!", Toast.LENGTH_LONG).show();
+                    imageResults.addAll(resultsArray);
+                    aResults.notifyDataSetChanged();
+
+                    Toast.makeText(getApplicationContext(), "Data loaded", Toast.LENGTH_SHORT).show();
                 }
             });
 
