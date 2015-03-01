@@ -1,0 +1,8 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.codepath.pixurch.activities.SettingsActivity">
+    <!--<item android:id="@+id/complete_back" android:title="Save"-->
+        <!--android:orderInCategory="1" app:showAsAction="ifRoom"-->
+        <!--android:icon="@drawable/ic_back_arrow" />-->
+</menu>

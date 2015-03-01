@@ -1,17 +1,22 @@
 package com.codepath.pixurch.activities;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.support.v7.widget.SearchView;
+import android.widget.Toast;
 
 import com.codepath.pixurch.R;
 import com.codepath.pixurch.adapters.ResultAdapter;
 import com.codepath.pixurch.models.ImageResult;
+import com.codepath.pixurch.models.SearchPreferences;
 import com.codepath.pixurch.models.SearchRequest;
 
 import java.util.ArrayList;
@@ -23,20 +28,30 @@ public class SearchActivity extends ActionBarActivity {
     RecyclerView rvResults;
     ResultAdapter aResults;
     RecyclerView.LayoutManager manager;
+    MenuItem searchBar;
+    SharedPreferences preferences;
+    SearchPreferences searchPreferences;
+
+    private final int FILTERS_REQUEST_CODE = 1337;
+
+    public final MenuItem getSearchBar (){
+        return searchBar;
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
+        preferences = getSharedPreferences("img_search_prefs", MODE_PRIVATE);
+        searchPreferences = new SearchPreferences(preferences);
+
         imageResults = new ArrayList<>();
         rvResults = (RecyclerView) findViewById(R.id.rvResults);
         manager = new StaggeredGridLayoutManager(3,StaggeredGridLayoutManager.VERTICAL);
         rvResults.setLayoutManager(manager);
         aResults = new ResultAdapter(getApplicationContext(), imageResults);
         rvResults.setAdapter(aResults);
-
-
-
     }
 
 
@@ -44,14 +59,18 @@ public class SearchActivity extends ActionBarActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_search, menu);
-        MenuItem searchBar = menu.findItem(R.id.action_search);
+        searchBar = menu.findItem(R.id.action_search);
         SearchView searchView = (SearchView)  MenuItemCompat.getActionView(searchBar);
         searchView.setOnQueryTextListener(new android.support.v7.widget.SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                new SearchRequest(query).response(new SearchRequest.ResultLoaderListener() {
+                MenuItem searchBar = getSearchBar();
+                searchBar.collapseActionView();
+                setActionBarTitleForQuery(query);
+                new SearchRequest(query, searchPreferences).response(new SearchRequest.ResultLoaderListener() {
                     @Override
                     public void onResultLoaded(ArrayList<ImageResult> resultsArray) {
+                        imageResults.clear();
                         imageResults.addAll(resultsArray);
                         aResults.notifyDataSetChanged();
                     }
@@ -76,10 +95,33 @@ public class SearchActivity extends ActionBarActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+//        if (id == R.id.action_settings) {
+//            return true;
+//        }
+        if (id == R.id.btnFilters){
+            Intent i = new Intent(this.getApplicationContext(), SettingsActivity.class);
+            this.startActivityForResult(i, FILTERS_REQUEST_CODE);
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void setActionBarTitleForQuery(String query){
+        String title = "Images for \"" + query + "\"";
+        getSupportActionBar().setTitle(title);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(requestCode == FILTERS_REQUEST_CODE && resultCode == RESULT_OK) {
+            searchPreferences.setSize(data.getStringExtra("size"));
+            searchPreferences.setColor(data.getStringExtra("color"));
+            searchPreferences.setType(data.getStringExtra("type"));
+            searchPreferences.setSite(data.getStringExtra("site"));
+            imageResults.clear();
+            searchPreferences.getPrefsFromSharedPreferences();
+            aResults.notifyDataSetChanged();
+        }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 }

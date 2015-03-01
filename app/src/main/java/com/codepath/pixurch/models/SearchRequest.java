@@ -23,9 +23,11 @@ public class SearchRequest {
     static AsyncHttpClient client;
     static String queryText;
     static ArrayList<ImageResult> resultArray;
+    private static SearchPreferences preferences;
 
-    public SearchRequest(String queryText) {
+    public SearchRequest(String queryText, SearchPreferences preferences) {
         this.queryText = queryText;
+        this.preferences = preferences;
     }
 
     public static interface ResultLoaderListener {
@@ -39,11 +41,16 @@ public class SearchRequest {
             return "";
         }
     }
-    private static String searchUrlWithParams() {
-        return ENDPOINT + "?v=1.0&rsz=8&q=" + encodedQueryText();
+    private String searchUrlWithParams() {
+        String site = empty(preferences.site) ? "" : "&as_sitesearch=".concat(preferences.site);
+        String size = empty(preferences.size) ? "" : "&imgsz=".concat(preferences.size);
+        String color = empty(preferences.color) ? "" : "&imgcolor=".concat(preferences.color);
+        String type = empty(preferences.type) ? "" : "&imgtype=".concat(preferences.type);
+        return ENDPOINT + "?v=1.0&rsz=8&q=" + encodedQueryText()
+               + site + size + color + type   ;
     }
 
-    public static void response(final ResultLoaderListener listener) {
+    public void response(final ResultLoaderListener listener) {
         client = new AsyncHttpClient();
         client.get(searchUrlWithParams(), new JsonHttpResponseHandler() {
 
@@ -65,5 +72,13 @@ public class SearchRequest {
             }
         });
 
+    }
+
+    private boolean empty(String str){
+        if (str.length() > 0){
+            return false;
+        } else {
+            return true;
+        }
     }
 }

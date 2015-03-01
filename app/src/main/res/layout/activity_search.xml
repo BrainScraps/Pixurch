@@ -5,36 +5,11 @@
     tools:context=".SearchActivity">
 
 
-    <!--<android.support.v7.widget.RecyclerView-->
-        <!--android:id="@+id/rvImages"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content">-->
-
-    <!--</android.support.v7.widget.RecyclerView>-->
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/searchText"
-        android:layout_alignBottom="@+id/btnSearch"
-        android:layout_toLeftOf="@+id/btnSearch"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Search"
-        android:id="@+id/btnSearch"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentTop="true" />
-
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rvResults"
         android:scrollbars="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentBottom="true"
-        android:layout_alignTop="@+id/btnSearch"/>
+        android:layout_alignParentTop="true"/>
 </RelativeLayout>
