@@ -1,7 +1,11 @@
 package com.codepath.pixurch.adapters;
 
 import android.content.Context;
+import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -42,8 +46,8 @@ public class ResultAdapter extends RecyclerView.Adapter<ResultAdapter.ResultView
     @Override
     public void onBindViewHolder(ResultViewHolder holder, int i) {
         ImageResult result = results.get(i);
-        holder.title.setText(Html.fromHtml(result.title));
-        Picasso.with(context).load(result.thumbUrl).into(holder.ivResult);
+//        holder.title.setText(Html.fromHtml(result.title));
+        Picasso.with(context).load(result.fullUrl).into(holder.ivResult);
     }
 
     @Override
@@ -57,9 +61,10 @@ public class ResultAdapter extends RecyclerView.Adapter<ResultAdapter.ResultView
         ImageView ivResult;
         public ResultViewHolder(View itemView) {
             super(itemView);
-            title = (TextView) itemView.findViewById(R.id.tvTitle);
+//            title = (TextView) itemView.findViewById(R.id.tvTitle);
             ivResult = (ImageView) itemView.findViewById(R.id.ivResult);
 
         }
     }
+
 }

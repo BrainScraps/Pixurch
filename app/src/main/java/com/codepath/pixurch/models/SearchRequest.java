@@ -24,10 +24,18 @@ public class SearchRequest {
     static String queryText;
     static ArrayList<ImageResult> resultArray;
     private static SearchPreferences preferences;
+    private int pageNumber;
+    private int previousResults;
 
     public SearchRequest(String queryText, SearchPreferences preferences) {
         this.queryText = queryText;
         this.preferences = preferences;
+    }
+
+    public SearchRequest(int page, int totalItems){
+        pageNumber = page;
+        previousResults = totalItems;
+
     }
 
     public static interface ResultLoaderListener {
@@ -48,6 +56,15 @@ public class SearchRequest {
         String type = empty(preferences.type) ? "" : "&imgtype=".concat(preferences.type);
         return ENDPOINT + "?v=1.0&rsz=8&q=" + encodedQueryText()
                + site + size + color + type   ;
+    }
+
+    private String loadMoreUrlWithParams(){
+        String site = empty(preferences.site) ? "" : "&as_sitesearch=".concat(preferences.site);
+        String size = empty(preferences.size) ? "" : "&imgsz=".concat(preferences.size);
+        String color = empty(preferences.color) ? "" : "&imgcolor=".concat(preferences.color);
+        String type = empty(preferences.type) ? "" : "&imgtype=".concat(preferences.type);
+        return ENDPOINT + "?v=1.0&rsz=8&q=" + encodedQueryText()
+                + site + size + color + type + "start=" + String.valueOf(previousResults)   ;
     }
 
     public void response(final ResultLoaderListener listener) {
@@ -73,6 +90,32 @@ public class SearchRequest {
         });
 
     }
+
+    public void loadMore(final ResultLoaderListener listener) {
+        client = new AsyncHttpClient();
+        client.get(loadMoreUrlWithParams(), new JsonHttpResponseHandler() {
+
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                resultArray = new ArrayList<>();
+                try {
+                    JSONArray array = response.getJSONObject("responseData").getJSONArray("results");
+                    for (int i = 0; i < array.length(); i++) {
+                        JSONObject obj = array.getJSONObject(i);
+                        ImageResult result = new ImageResult(obj);
+                        resultArray.add(result);
+
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                listener.onResultLoaded(resultArray);
+            }
+        });
+
+    }
+
 
     private boolean empty(String str){
         if (str.length() > 0){

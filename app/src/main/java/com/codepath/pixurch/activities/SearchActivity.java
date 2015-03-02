@@ -14,6 +14,7 @@ import android.support.v7.widget.SearchView;
 import android.widget.Toast;
 
 import com.codepath.pixurch.R;
+import com.codepath.pixurch.adapters.EndlessRecyclerOnScrollListener;
 import com.codepath.pixurch.adapters.ResultAdapter;
 import com.codepath.pixurch.models.ImageResult;
 import com.codepath.pixurch.models.SearchPreferences;
@@ -48,10 +49,25 @@ public class SearchActivity extends ActionBarActivity {
 
         imageResults = new ArrayList<>();
         rvResults = (RecyclerView) findViewById(R.id.rvResults);
-        manager = new StaggeredGridLayoutManager(3,StaggeredGridLayoutManager.VERTICAL);
+        manager = new StaggeredGridLayoutManager(2,StaggeredGridLayoutManager.VERTICAL);
         rvResults.setLayoutManager(manager);
         aResults = new ResultAdapter(getApplicationContext(), imageResults);
         rvResults.setAdapter(aResults);
+        rvResults.setOnScrollListener(new EndlessRecyclerOnScrollListener((StaggeredGridLayoutManager) manager) {
+            @Override
+            public void onLoadMore(int page, int totalItemCount) {
+                new SearchRequest(page, totalItemCount).loadMore(new SearchRequest.ResultLoaderListener() {
+                    @Override
+                    public void onResultLoaded(ArrayList<ImageResult> resultsArray) {
+                        Log.d("WHAAA RESULTS", String.valueOf(resultsArray.size()) );
+                        for(int i = 0; i < resultsArray.size(); i++){
+                           imageResults.add(resultsArray.get(i));
+                        }
+                        aResults.notifyDataSetChanged();
+                    }
+                });
+            }
+        });
     }
 
 
