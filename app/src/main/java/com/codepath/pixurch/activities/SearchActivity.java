@@ -11,14 +11,19 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.support.v7.widget.SearchView;
+import android.view.MotionEvent;
+import android.view.View;
 import android.widget.Toast;
 
+import com.codepath.pixurch.ImageDetail;
 import com.codepath.pixurch.R;
 import com.codepath.pixurch.adapters.EndlessRecyclerOnScrollListener;
+import com.codepath.pixurch.adapters.RecyclerItemClickListener;
 import com.codepath.pixurch.adapters.ResultAdapter;
 import com.codepath.pixurch.models.ImageResult;
 import com.codepath.pixurch.models.SearchPreferences;
 import com.codepath.pixurch.models.SearchRequest;
+import com.codepath.pixurch.adapters.ResultViewHolder;
 
 import java.util.ArrayList;
 
@@ -32,6 +37,7 @@ public class SearchActivity extends ActionBarActivity {
     MenuItem searchBar;
     SharedPreferences preferences;
     SearchPreferences searchPreferences;
+    ResultViewHolder holder;
 
     private final int FILTERS_REQUEST_CODE = 1337;
 
@@ -52,7 +58,33 @@ public class SearchActivity extends ActionBarActivity {
         manager = new StaggeredGridLayoutManager(2,StaggeredGridLayoutManager.VERTICAL);
         rvResults.setLayoutManager(manager);
         aResults = new ResultAdapter(getApplicationContext(), imageResults);
+
         rvResults.setAdapter(aResults);
+        rvResults.addOnItemTouchListener(
+                new RecyclerItemClickListener(getApplicationContext(), new RecyclerItemClickListener.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(View view, int position) {
+                        // do whatever
+                        Intent i = new Intent(getApplicationContext(), ImageDetail.class);
+                        i.putExtra("imageResult", imageResults.get(position));
+                        startActivity(i);
+                    }
+                })
+        );
+//        rvResults.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
+//            @Override
+//            public boolean onInterceptTouchEvent(RecyclerView recyclerView, MotionEvent motionEvent) {
+//                return false;
+//            }
+//
+//            @Override
+//            public void onTouchEvent(RecyclerView recyclerView, MotionEvent motionEvent) {
+//                Intent i = new Intent(getApplicationContext(), ImageDetail.class);
+//
+////                i.putExtra("image", image);
+//
+//            }
+//        });
         rvResults.setOnScrollListener(new EndlessRecyclerOnScrollListener((StaggeredGridLayoutManager) manager) {
             @Override
             public void onLoadMore(int page, int totalItemCount) {

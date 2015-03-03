@@ -3,7 +3,9 @@ package com.codepath.pixurch.models;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class ImageResult {
+import java.io.Serializable;
+
+public class ImageResult implements Serializable{
     public String fullUrl;
     public String thumbUrl;
     public String title;

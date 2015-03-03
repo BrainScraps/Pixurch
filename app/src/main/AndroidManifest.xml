@@ -26,6 +26,14 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.codepath.pixurch.activities.SearchActivity" />
         </activity>
+        <activity
+            android:name=".ImageDetail"
+            android:label="@string/title_activity_image_detail"
+            android:parentActivityName=".activities.SearchActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.codepath.pixurch.activities.SearchActivity" />
+        </activity>
     </application>
 
 </manifest>

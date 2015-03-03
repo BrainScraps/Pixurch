@@ -2,6 +2,7 @@ package com.codepath.pixurch.adapters;
 
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.util.Log;
 
 import java.lang.reflect.Array;
 
@@ -38,6 +39,7 @@ public abstract class EndlessRecyclerOnScrollListener extends RecyclerView.OnScr
         }
         if (!loading && (totalItemCount - visibleItemCount)
                 <= (firstVisibleItems[0] + visibleThreshold)) {
+            Log.d("math", String.valueOf((totalItemCount - visibleItemCount)) + " " + String.valueOf(firstVisibleItems[0] + visibleThreshold));
             // End has been reached
 
             // Do something
